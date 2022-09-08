@@ -1,4 +1,4 @@
-from flask import redirect, request, render_template, session, flash
+from flask import Response, redirect, request, render_template, session, flash
 from flask_login import login_user, logout_user, current_user
 
 import json
@@ -99,7 +99,7 @@ def interactions():
             return {'status': 200}
 
 
-def event_hook(request=None):
+def event_hook(request=None): 
     """The base url route. Needed for the request url verification for slack"""
     if request is not None:
         json_dict = json.loads(request.body.decode("utf-8"))

@@ -154,7 +154,7 @@ class SlackBotLogic:
         vehicle_options = self.create_vehicle_options_slack_block(vehicle_names)
         with open(path_to_file) as f:
             data = json.load(f)
-        data['blocks'][1]['element']['options'] = vehicle_options
+        data['blocks'][0]['element']['options'] = vehicle_options
         with open(path_to_file, "w") as write_f:
             json.dump(data, write_f)
         with open(path_to_file, "r") as new_f:
@@ -331,6 +331,21 @@ class SlackBotLogic:
                 response_text - The text that will be sent to the user
         """
         self.slack_client.chat_postEphemeral(channel=user_slack_id, text=response_text, user=user_slack_id)
+
+    def handle_modal_response(self, app, response_data):
+
+        with app.app_context():
+            vehicle_names = api.db.index.get_vehicle_names()
+
+        data = self.get_slack_block_and_add_vehicles('app/slack_blocks/reserve_block.json', vehicle_names) 
+        
+        self.slack_client.views_open(
+            trigger_id = response_data['trigger_id'],
+            view=data
+        )
+        return
+
+        
 
     def handle_message_response(self, value, app):
         """ Reads the command given in slack and responds depending on what the user's input was

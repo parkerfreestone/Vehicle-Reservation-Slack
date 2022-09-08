@@ -12,3 +12,6 @@ class links:
     admin_user = '/admin/user/'
     admin_user_new = '/admin/user/new'
     admin_vehicle = '/admin/vehicle'
+
+    # SLASH COMMAND LINKS
+    slash_reserve = '/reserve'

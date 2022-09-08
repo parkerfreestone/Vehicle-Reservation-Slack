@@ -16,6 +16,9 @@ from app.views import login, logout, create_new_user, interactions, event_hook
 from app.links import links
 from app.slack_bot import SlackBotLogic
 
+# SLASH COMMANDS
+from app.slash_commands import SlashCommands
+
 # This function is required or else there will be a context error
 def create_app():
     new_app = Flask(__name__, template_folder='./app/templates', static_folder='./app/static')
@@ -29,6 +32,15 @@ def create_app():
     new_app.add_url_rule(links.create_new_user, view_func=create_new_user, methods=['POST'])
     new_app.add_url_rule(links.interactions, view_func=interactions, methods=['POST'])
     new_app.add_url_rule(links.home, view_func=event_hook)
+
+    # SLASH COMMANDS
+    config = {
+        'app': new_app
+    }
+    slash_commands = SlashCommands(config)
+    
+    new_app.add_url_rule(links.slash_reserve, view_func=slash_commands.reserve, methods=['POST'])
+
     ########
     return new_app
 
@@ -37,7 +49,6 @@ app = create_app()
 app.app_context().push()
 with app.app_context():
     db.create_all()
-
 
 def page_not_found(e):
     return render_template('404.html', admin_route=links.admin_home), 404
